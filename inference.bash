@@ -1,0 +1,1 @@
+python inference.py --weight ./ignored/dm_new_net_addBN/04112021_053427/best_model_epoch3920.pth --dataPath ./data/DM4/testing/Image/ --output ./ignored/testOutput --net DeepLabv3_modified_addBN --feature_channel 128 --backbone resnet18

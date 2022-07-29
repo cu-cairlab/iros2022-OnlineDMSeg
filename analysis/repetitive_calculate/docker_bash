@@ -1,0 +1,6 @@
+sudo docker run --gpus all  -p 8888:8888 -it --ipc=host -v $PWD:/media \
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -v /home/leo/Downloads/2019_dataset:/data \
+    postprocessing /bin/bash
