@@ -11,7 +11,7 @@ Todo: \
 -Test on different platforms 
 
 Training
-1. Download the data from the link (to be decided)
+1. Download the data from the link: https://cornell.box.com/s/3i2rod89mwb17apjeo103v39n33aaaq7
 
 2. Build the dockerfile in this repository by running:
 "sudo docker build -t dm_project ./dockerfile" \
@@ -30,8 +30,8 @@ Testing On Xavier:
 
 4. Mount external ssd with path /media/Data
 
-5. Download the testing data from the link (to be decided) to /media/Data
+5. Download the testing data from the link: https://cornell.box.com/s/4dsgv2xr9nubjxwqfs38pdf1at6e0nvu to /media/Data
 
-6. Download the testing weight from the link (to be decided) to /media/Data
+6. Download the testing weight from the link: https://cornell.box.com/s/l691wfgaz81i5qlhicnz2g8g7j9na1o5 to /media/Data
 
 7. Run formal_tests_ablation.bash or formal_tests_benchmark.bash
