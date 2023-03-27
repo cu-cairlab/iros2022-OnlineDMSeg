@@ -13,8 +13,6 @@ import torch
 from torchvision import transforms
 
 
-from ImageMask2Tiles_uniform import processImg
-from ImageMask2Tiles_uniform import assemblyImg
 
 
 from DeepLabv3_modified_addBN import custom_net
@@ -118,8 +116,8 @@ def load_model(args):
 
 class imageProcessor(object):
 
-    def __init__(self,modelDir,runUpImgDir,args=None):
-
+    def __init__(self,modelDir,runUpImgDir,ImageMask2Tiles_instance,args=None):
+        self.ImageMask2Tiles = ImageMask2Tiles_instance
         if args != None:
 
 
@@ -158,6 +156,7 @@ class imageProcessor(object):
         print('run up')
         print('should take ~30s')
         image = cv2.imread(runUpImgDir)
+        #image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
         for i in range(50):
             self.inference(image)
         print('run up completed')       
@@ -170,21 +169,20 @@ class imageProcessor(object):
 
 
         #input_img = cv2.imread(fp)
-        tiles = processImg(input_img)
         output_results = {}
         infected_area = 0
         canopy_area = 0
-        for idx,tile in enumerate(tiles):
-            y = idx%3
-            x = int(idx/3)
+        
+        tiles = self.ImageMask2Tiles.processImg(input_img)
+        tiles_keys = tiles.keys()
+        start = time.time()
+        for key in tiles_keys:
+            tile = tiles[key]
             #print((x,y))
-            input_data = self.data_transforms(tile.image).unsqueeze_(0).cuda().half()
-            
-        #start = time.time()
+            input_data = tile #self.data_transforms(tile).unsqueeze_(0).cuda().half()
             with torch.no_grad():
                 outputs = self.model(input_data)#[0]
             _, pred = torch.max(outputs, 1)
-   
             #mask_output =  pred.data.cpu().numpy().squeeze().astype(np.uint8)
             mask_output = pred.data.squeeze()
             leaf = int(torch.sum(mask_output != 0))
@@ -197,16 +195,13 @@ class imageProcessor(object):
                 canopy_area = canopy_area + 0
 
             if dump: 
-                output_results[(x,y)] = mask_output.cpu().numpy().astype(np.uint8)
-
-
-
-
+                output_results[key] = mask_output.cpu().numpy().astype(np.uint8)
+        print("model running: ", time.time()-start)
         #print([infected_area,canopy_area])
 
 
         if dump:
-            assembledImg = assemblyImg(output_results).astype('uint8')
+            assembledImg = self.ImageMask2Tiles.assemblyImg(output_results).astype('uint8')
 
 
             
@@ -216,6 +211,8 @@ class imageProcessor(object):
             leafMask[leafMask==1] = 0
             leafMask[leafMask==2] = 1
 
+            print(redImg.shape)
+            print(leafMask.shape)
 
             redMask = cv2.bitwise_and(redImg, redImg, mask=leafMask)
             blueImg = np.zeros(input_img.shape, input_img.dtype)
@@ -224,7 +221,7 @@ class imageProcessor(object):
             DMMask[DMMask==2] = 0
             blueImg = cv2.bitwise_and(blueImg, blueImg, mask=DMMask)
  
-            #cv2.addWeighted(blueImg, 0.5, redMask, 0.5, 0, blueImg)
+            cv2.addWeighted(blueImg, 0.5, redMask, 0.5, 0, blueImg)
 
             assembledImg = blueImg
 

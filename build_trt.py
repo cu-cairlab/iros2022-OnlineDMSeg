@@ -4,6 +4,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch2trt import torch2trt
+
+
 from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
@@ -15,7 +18,6 @@ from torch.nn import functional as F
 
 import csv
 
-from torch2trt import torch2trt
 
 
 from DM import DMData
@@ -243,6 +245,12 @@ if True:
 
 w = int(1125)
 h = int(1352)
+
+
+#w = int(1500)
+#h = int(2048)
+
+
 bs = int(1)
 
 print([w,h])
