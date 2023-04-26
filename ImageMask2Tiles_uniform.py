@@ -94,6 +94,7 @@ class ImageMask2Tiles():
             im = to_tensor(im)
             im = self.data_normalize(im)
             #im = im.unsqueeze_(0).half()
+            
         h,w = (self.new_imgShape[0],self.new_imgShape[1])
 
         tiles = {}

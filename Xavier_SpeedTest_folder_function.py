@@ -174,6 +174,7 @@ class imageProcessor(object):
         canopy_area = 0
         
         tiles = self.ImageMask2Tiles.processImg(input_img)
+        #print('check11')
         tiles_keys = tiles.keys()
         start = time.time()
         for key in tiles_keys:
